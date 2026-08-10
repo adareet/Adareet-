@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="th" data-theme="white" data-font="anuphan">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="Adareet Foundation v0.2 — writing environment for project-based thinking." />
+  <title>Adareet Foundation v0.2</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <noscript>
+    <div class="noscript">
+      Adareet ต้องใช้ JavaScript เพื่อทำงาน
+    </div>
+  </noscript>
+
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">A</div>
+        <div>
+          <h1>Adareet</h1>
+          <p>Project-first writing environment</p>
+        </div>
+      </div>
+
+      <div class="hero">
+        <h2>เปิดมาเป็น Project และ Chat ก่อน</h2>
+        <p>
+          ผู้เขียนคุยกับ AI เหมือนแชทปกติ แต่ด้านหลังมีระบบ Project, Knowledge, Chapter, History,
+          Theme, Font และ permission สำหรับ AI แยกไว้ชัดเจน
+        </p>
+      </div>
+
+      <div class="login-grid">
+        <form id="loginForm" class="login-box">
+          <h3>เข้าสู่ระบบ</h3>
+
+          <label class="field">
+            <span>ชื่อที่แสดง</span>
+            <input id="loginName" type="text" autocomplete="name" placeholder="Ice" />
+          </label>
+
+          <label class="field">
+            <span>อีเมล</span>
+            <input id="loginEmail" type="email" autocomplete="email" placeholder="ice@example.com" />
+          </label>
+
+          <div class="button-row">
+            <button id="googleLoginBtn" type="button" class="button primary">
+              Continue with Google
+            </button>
+            <button id="guestLoginBtn" type="button" class="button">
+              Use as guest
+            </button>
+          </div>
+
+          <p class="hint">
+            Google เป็น provider หลักใน foundation นี้ ส่วน OAuth จริงจะต่อ backend ภายหลัง
+          </p>
+        </form>
+
+        <aside class="login-box info-box">
+          <h3>สิ่งที่มีใน foundation นี้</h3>
+          <ul class="feature-list">
+            <li>Project → Chat เป็นจุดเริ่มต้น</li>
+            <li>Knowledge แยก source / status</li>
+            <li>Chapter มี version snapshot</li>
+            <li>History เก็บร่องรอยการเปลี่ยนแปลง</li>
+            <li>Theme และ Font แยกเป็นระบบ</li>
+            <li>AI access เป็นสิทธิ์แบบ project-scoped</li>
+            <li>Export / Import JSON พร้อมต่อยอด</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell is-hidden">
+    <aside class="sidebar sidebar-left">
+      <div class="brand compact">
+        <div class="brand-mark" aria-hidden="true">A</div>
+        <div>
+          <h1>Adareet</h1>
+          <p>ผู้ช่วยจัดการความคิด</p>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-head">
+          <h2>Projects</h2>
+          <button id="newProjectRailBtn" type="button" class="icon-button" aria-label="สร้าง Project ใหม่">+</button>
+        </div>
+        <div id="projectList" class="project-list" aria-live="polite"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <p class="small-note">Private by default</p>
+        <p class="small-note">AI access is explicit and reversible</p>
+      </div>
+    </aside>
+
+    <main class="main-pane">
+      <header class="topbar">
+        <div class="project-heading">
+          <h2 id="currentProjectTitle">ยังไม่มี Project</h2>
+          <p id="currentProjectSub" class="muted">สร้าง Project เพื่อเริ่มคุย</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="toggleBackstageBtn" type="button" class="button soft">Backstage</button>
+          <button id="newChatBtn" type="button" class="button soft">+ Chat</button>
+          <button id="importBtn" type="button" class="button soft">Import</button>
+          <button id="exportBtn" type="button" class="button soft">Export</button>
+          <button id="signOutBtn" type="button" class="button">Sign out</button>
+        </div>
+      </header>
+
+      <section id="emptyProjectView" class="empty-state">
+        <h2>ยังไม่มี Project</h2>
+        <p>
+          หน้าแรกของ Adareet ตั้งใจให้รู้สึกเหมือนคุยกับ AI ปกติ แต่ข้างหลังมีข้อมูล Project
+          และโครงสร้างความคิดที่จัดระเบียบไว้
+        </p>
+
+        <div class="button-row">
+          <button id="createFirstProjectBtn" type="button" class="button primary">
+            Create Project
+          </button>
+          <button id="seedProjectBtn" type="button" class="button soft">
+            Load sample
+          </button>
+        </div>
+      </section>
+
+      <section id="workspace" class="workspace is-hidden">
+        <div class="chat-shell">
+          <div class="chat-header">
+            <div>
+              <h3>Chat</h3>
+              <p id="chatSubtitle" class="muted">Project เดียว หลายห้องแชท เชื่อมความคิดเข้าหากัน</p>
+            </div>
+            <div id="chatStrip" class="chat-strip" aria-label="Chat list"></div>
+          </div>
+
+          <div id="messageList" class="message-list" aria-live="polite"></div>
+
+          <div class="composer-card">
+            <label class="composer-label" for="composerInput">พ่นไอเดียหรือคุยกับ Adareet</label>
+            <textarea
+              id="composerInput"
+              class="composer-input"
+              placeholder="เช่น ไอเดีย: ... / ยืนยัน: ... / chapter: ..."
+            ></textarea>
+
+            <div class="composer-actions">
+              <div class="quick-actions">
+                <button class="button soft quick-action" data-quick="idea" type="button">ไอเดีย</button>
+                <button class="button soft quick-action" data-quick="confirm" type="button">ยืนยัน</button>
+                <button class="button soft quick-action" data-quick="chapter" type="button">Chapter</button>
+                <button class="button soft quick-action" data-quick="canon" type="button">Canon?</button>
+              </div>
+
+              <div class="send-group">
+                <span class="hint">Ctrl/⌘ + Enter เพื่อส่ง</span>
+                <button id="sendBtn" type="button" class="button primary">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside id="backstage" class="sidebar sidebar-right open">
+      <div class="sidebar-header">
+        <div>
+          <h2>Backstage</h2>
+          <p class="muted">สิ่งที่ผู้เขียนจะเปิดดูเมื่ออยากเห็นว่าข้างหลังเกิดอะไรขึ้น</p>
+        </div>
+        <button id="closeBackstageMobileBtn" type="button" class="icon-button" aria-label="ปิด backstage">×</button>
+      </div>
+
+      <nav class="tab-bar" aria-label="Backstage tabs">
+        <button class="tab-button is-active" data-tab="overview" type="button">Overview</button>
+        <button class="tab-button" data-tab="knowledge" type="button">Knowledge</button>
+        <button class="tab-button" data-tab="chapters" type="button">Chapters</button>
+        <button class="tab-button" data-tab="history" type="button">History</button>
+        <button class="tab-button" data-tab="settings" type="button">Settings</button>
+      </nav>
+
+      <div class="backstage-body">
+        <section id="tab-overview" class="tab-panel is-active"></section>
+        <section id="tab-knowledge" class="tab-panel is-hidden"></section>
+        <section id="tab-chapters" class="tab-panel is-hidden"></section>
+        <section id="tab-history" class="tab-panel is-hidden"></section>
+        <section id="tab-settings" class="tab-panel is-hidden"></section>
+      </div>
+    </aside>
+  </div>
+
+  <dialog id="projectDialog" class="dialog">
+    <form id="projectForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <h3>New Project</h3>
+        <button type="submit" value="cancel" class="icon-button" aria-label="ปิด">×</button>
+      </div>
+
+      <label class="field">
+        <span>Project name</span>
+        <input id="projectName" type="text" placeholder="Initial D Butterfly Effect" required />
+      </label>
+
+      <label class="field">
+        <span>Description</span>
+        <textarea id="projectDesc" rows="4" placeholder="Short project note"></textarea>
+      </label>
+
+      <div class="button-row">
+        <button id="createProjectBtn" type="submit" value="default" class="button primary">Create</button>
+        <button type="submit" value="cancel" class="button">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="importDialog" class="dialog">
+    <form id="importForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <h3>Import JSON</h3>
+        <button type="submit" value="cancel" class="icon-button" aria-label="ปิด">×</button>
+      </div>
+
+      <p class="hint">นำเข้าไฟล์สำรองของ Adareet ทั้งโปรเจกต์ หรือ JSON ที่ export ไว้</p>
+      <input id="importFile" type="file" accept="application/json" />
+
+      <div class="button-row">
+        <button id="doImportBtn" type="button" class="button primary">Import</button>
+        <button type="submit" value="cancel" class="button">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="aiConsentDialog" class="dialog">
+    <form id="aiConsentForm" method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <h3>Grant project AI access?</h3>
+        <button type="submit" value="cancel" class="icon-button" aria-label="ปิด">×</button>
+      </div>
+
+      <p class="hint">
+        AI จะอ่านบริบทของ Project นี้ก็ต่อเมื่อผู้ใช้อนุญาต และสามารถถอนสิทธิ์ได้ภายหลัง
+      </p>
+
+      <div class="button-row">
+        <button id="allowAiBtn" type="button" class="button primary">Allow</button>
+        <button id="denyAiBtn" type="button" class="button">Deny</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
