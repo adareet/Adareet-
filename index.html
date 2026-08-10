@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adareet v0.1</title>
+  <style>
+    @font-face { font-family: "THSarabunLocal"; src: local("TH Sarabun New"), local("TH Sarabun"); }
+    :root{
+      --bg:#f7f1ea;
+      --panel:#fffdf8;
+      --ink:#241f1a;
+      --muted:#746a60;
+      --line:#ddd3c6;
+      --accent:#d890a1;      /* ชมพูกลีบบัว */
+      --accent-soft:#f4dde3;
+      --accent-deep:#9f5c70;
+      --ok:#4f7a63;
+      --danger:#a05c55;
+      --shadow:0 10px 24px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:"THSarabunLocal","Noto Sans Thai",Tahoma,sans-serif;
+      font-size:20px;
+      line-height:1.45;
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+    .sidebar{
+      background:#efe6dd;
+      border-right:1px solid var(--line);
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand-mark{
+      width:44px;height:44px;border:1px solid var(--accent-deep);
+      border-radius:50%;display:grid;place-items:center;color:var(--accent-deep);
+      font-weight:700;
+    }
+    .brand-name{font-size:30px;line-height:1}
+    .brand-sub{font-size:18px;color:var(--muted)}
+    .primary,.secondary{
+      border-radius:10px;
+      padding:8px 14px;
+      border:1px solid var(--accent-deep);
+      font-weight:600;
+    }
+    .primary{background:var(--accent-deep);color:#fff}
+    .secondary{background:transparent;color:var(--accent-deep)}
+    .project-list{display:flex;flex-direction:column;gap:8px;overflow:auto;padding-right:2px}
+    .project-item{
+      border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:10px;color:var(--ink)
+    }
+    .project-item.active{background:var(--accent-soft)}
+    .project-item small{display:block;color:var(--muted)}
+    .sidebar-foot{margin-top:auto;color:var(--muted);font-size:16px}
+    main{min-width:0}
+    .topbar{
+      height:86px;border-bottom:1px solid var(--line);background:rgba(255,253,248,.95);
+      display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+      position:sticky;top:0;z-index:4;backdrop-filter:blur(6px)
+    }
+    .title{font-size:30px}
+    .muted{color:var(--muted)}
+    .workspace{height:calc(100vh - 86px);display:flex;flex-direction:column}
+    .hidden{display:none !important}
+    .empty-state{
+      min-height:calc(100vh - 86px);
+      display:grid;place-items:center;align-content:center;gap:6px;text-align:center;padding:40px
+    }
+    .empty-icon{font-size:48px;color:var(--accent-deep)}
+    .empty-state h1{font-size:42px;margin:0}
+    .empty-state p{max-width:650px;color:var(--muted);margin:0 0 10px}
+    .tabs{display:flex;gap:4px;padding:12px 28px 0}
+    .tab{border:0;background:transparent;padding:8px 18px;color:var(--muted)}
+    .tab.active{color:var(--ink);border-bottom:2px solid var(--accent-deep)}
+    .tab-panel{flex:1;min-height:0}
+    #chatTab{display:flex}
+    .chat-list{
+      width:230px;border-right:1px solid var(--line);padding:15px;overflow:auto;flex:none
+    }
+    .chat-item{
+      width:100%;text-align:left;border:0;background:transparent;padding:10px;border-radius:8px;display:block
+    }
+    .chat-item.active{background:var(--accent-soft)}
+    .chat-area{flex:1;display:flex;flex-direction:column;min-width:0}
+    .messages{
+      flex:1;overflow:auto;padding:28px 8%;
+      background:linear-gradient(to bottom, rgba(255,255,255,.35), rgba(255,255,255,0));
+    }
+    .message{max-width:860px;margin:0 auto 16px}
+    .message.user{text-align:right}
+    .bubble{
+      display:inline-block;text-align:left;padding:11px 16px;border-radius:12px;
+      border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);
+      white-space:pre-wrap;word-break:break-word
+    }
+    .user .bubble{background:var(--accent-soft)}
+    .system .bubble{border-style:dashed}
+    .system-note{color:var(--muted);font-size:16px;margin-top:5px}
+    .composer{border-top:1px solid var(--line);background:var(--panel);padding:15px 8%}
+    textarea,input,select{
+      width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;color:var(--ink);outline:none
+    }
+    textarea:focus,input:focus,select:focus{border-color:var(--accent-deep);box-shadow:0 0 0 3px rgba(217,144,161,.14)}
+    .composer textarea{min-height:92px;resize:vertical}
+    .composer-row{margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .hint{color:var(--muted);font-size:16px}
+    .data-toolbar{
+      display:flex;justify-content:space-between;align-items:center;padding:24px 28px 14px;gap:16px
+    }
+    .data-toolbar h2{margin:0}
+    .data-grid{
+      padding:0 28px 30px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+      gap:15px;overflow:auto
+    }
+    .data-card{
+      background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;box-shadow:var(--shadow)
+    }
+    .badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+    .badge{font-size:15px;padding:2px 8px;border-radius:999px;background:var(--accent-soft)}
+    .badge.danger{background:#f1d8d4;color:var(--danger)}
+    .badge.ok{background:#dce9e0;color:var(--ok)}
+    .data-content{white-space:pre-wrap;word-break:break-word}
+    .card-actions{margin-top:12px;display:flex;gap:7px;flex-wrap:wrap}
+    .history-list{padding:0 28px 30px;overflow:auto}
+    .history-item{background:var(--panel);border-bottom:1px solid var(--line);padding:12px 4px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;
+      padding:4px 10px;background:#fff;color:var(--muted);font-size:16px
+    }
+    dialog{
+      border:1px solid var(--line);border-radius:14px;padding:0;width:min(640px,92vw);box-shadow:var(--shadow)
+    }
+    dialog::backdrop{background:rgba(0,0,0,.25)}
+    .dialog-form{padding:24px;display:grid;gap:14px}
+    .dialog-form h2{margin:0}
+    .dialog-form label{display:grid;gap:5px}
+    .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+    .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .settings-row{display:flex;gap:10px;flex-wrap:wrap}
+    .theme-dot{
+      width:22px;height:22px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.15)
+    }
+    @media (max-width:900px){
+      .app{grid-template-columns:1fr}
+      .sidebar{min-height:auto;position:sticky;top:0;z-index:5}
+      .sidebar-foot{display:none}
+      .workspace{height:auto;min-height:calc(100vh - 86px)}
+      #chatTab{flex-direction:column}
+      .chat-list{width:auto;border-right:0;border-bottom:1px solid var(--line);display:flex;gap:8px;overflow:auto}
+      .chat-item{min-width:170px}
+      .messages{padding:20px}
+      .composer{padding:12px 20px}
+      .data-toolbar{padding:20px 20px 14px}
+      .data-grid{padding:0 20px 24px}
+      .history-list{padding:0 20px 24px}
+      .topbar{padding:0 18px}
+      .title{font-size:26px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div>
+        <div class="brand-name">Adareet</div>
+        <div class="brand-sub">ผู้ช่วยจัดการความคิด</div>
+      </div>
+    </div>
+
+    <button id="newProjectBtn" class="primary">＋ สร้าง Project</button>
+    <button id="themeBtn" class="secondary">🎨 ตั้งค่า Theme</button>
+
+    <div id="projectList" class="project-list"></div>
+
+    <div class="sidebar-foot">v0.1 Prototype · Core-first · Local storage</div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <div id="projectTitle" class="title">ยังไม่มี Project</div>
+        <div id="projectMeta" class="muted">สร้าง Project เพื่อเริ่มทดลอง</div>
+      </div>
+      <div class="top-actions">
+        <button id="exportBtn" class="secondary" disabled>ส่งออก JSON</button>
+      </div>
+    </header>
+
+    <section id="emptyState" class="empty-state">
+      <div class="empty-icon">✦</div>
+      <h1>Adareet</h1>
+      <p>พื้นที่ที่ผู้เขียนสามารถพ่นความคิดออกมาได้ แล้วค่อยจัดระเบียบภายหลัง</p>
+      <button id="emptyNewBtn" class="primary">สร้าง Project แรก</button>
+      <div class="pill">Original Canon · Manuscript · Confirmed Decision · Idea</div>
+    </section>
+
+    <section id="workspace" class="workspace hidden">
+      <nav class="tabs">
+        <button class="tab active" data-tab="chat">Chat</button>
+        <button class="tab" data-tab="data">ข้อมูล</button>
+        <button class="tab" data-tab="history">ประวัติ</button>
+      </nav>
+
+      <div id="chatTab" class="tab-panel">
+        <div id="chatList" class="chat-list"></div>
+        <div class="chat-area">
+          <div id="messages" class="messages"></div>
+          <div class="composer">
+            <div id="chatStatus" class="pill">พร้อมรับข้อมูล</div>
+            <div style="height:8px"></div>
+            <textarea id="messageInput" placeholder="พ่นไอเดียหรือคุยกับ Adareet ได้เลย..."></textarea>
+            <div class="composer-row">
+              <span class="hint">Prototype นี้ยังไม่มี AI ภายนอก · Core จัดเก็บข้อมูลพื้นฐานได้เอง</span>
+              <button id="sendBtn" class="primary">ส่ง</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dataTab" class="tab-panel hidden">
+        <div class="data-toolbar">
+          <div>
+            <h2>ข้อมูลของ Project</h2>
+            <p class="muted">แยกแหล่งที่มาและสถานะ ไม่ใช้คำว่า “Canon” เป็นหมวดรวม</p>
+          </div>
+          <button id="addDataBtn" class="secondary">＋ เพิ่มข้อมูล</button>
+        </div>
+        <div id="dataGrid" class="data-grid"></div>
+      </div>
+
+      <div id="historyTab" class="tab-panel hidden">
+        <div class="data-toolbar">
+          <div>
+            <h2>ประวัติการเปลี่ยนแปลง</h2>
+            <p class="muted">ข้อมูลที่ถูกขีดค่าไม่หายจากประวัติ</p>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="projectDialog">
+  <form method="dialog" id="projectForm" class="dialog-form">
+    <h2>สร้าง Project</h2>
+    <label>ชื่อเรื่อง
+      <input id="projectName" required placeholder="เช่น Initial D Butterfly Effect">
+    </label>
+    <label>คำอธิบาย
+      <textarea id="projectDescription" placeholder="เรื่องนี้เกี่ยวกับอะไร"></textarea>
+    </label>
+    <div class="dialog-actions">
+      <button value="cancel" class="secondary">ยกเลิก</button>
+      <button value="default" class="primary">สร้าง</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dataDialog">
+  <form method="dialog" id="dataForm" class="dialog-form">
+    <h2>เพิ่มข้อมูล</h2>
+    <label>ข้อความ
+      <textarea id="dataContent" required placeholder="เช่น บุนตะจะซื้อรถใหม่หลังเหตุการณ์..."></textarea>
+    </label>
+    <label>แหล่งที่มา
+      <select id="dataSource">
+        <option value="original_canon">Original Canon · Initial D</option>
+        <option value="manuscript">Manuscript · ต้นฉบับของผู้เขียน</option>
+        <option value="project_decision">Confirmed Project Decision</option>
+        <option value="idea">Unconfirmed Idea</option>
+      </select>
+    </label>
+    <label>สถานะ
+      <select id="dataStatus">
+        <option value="active">ใช้งานอยู่</option>
+        <option value="unconfirmed">ยังไม่ยืนยัน</option>
+        <option value="superseded">ถูกขีดค่าแล้ว</option>
+      </select>
+    </label>
+    <div class="dialog-actions">
+      <button value="cancel" class="secondary">ยกเลิก</button>
+      <button value="default" class="primary">บันทึก</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="themeDialog">
+  <form method="dialog" id="themeForm" class="dialog-form">
+    <h2>ตั้งค่า Theme</h2>
+    <label>สีหลัก
+      <select id="themeSelect">
+        <option value="lotus">ชมพูกลีบบัว</option>
+        <option value="rose">ชมพูโรส</option>
+        <option value="sage">เขียวหม่น</option>
+        <option value="ink">น้ำเงินหมึก</option>
+        <option value="cocoa">น้ำตาลโกโก้</option>
+      </select>
+    </label>
+    <div class="settings-row">
+      <span class="pill"><span class="theme-dot" id="themePreviewDot"></span> ดูตัวอย่างสี</span>
+      <span class="pill">ฟอนต์: TH Sarabun New</span>
+    </div>
+    <div class="dialog-actions">
+      <button value="cancel" class="secondary">ยกเลิก</button>
+      <button value="default" class="primary">ใช้ Theme นี้</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const KEY = "adareet_v01_state";
+const THEME_KEY = "adareet_v01_theme";
+
+const THEMES = {
+  lotus:  { bg:"#f7f1ea", panel:"#fffdf8", ink:"#241f1a", muted:"#746a60", line:"#ddd3c6", accent:"#d890a1", accentSoft:"#f4dde3", accentDeep:"#9f5c70", ok:"#4f7a63", danger:"#a05c55" },
+  rose:   { bg:"#fff6f8", panel:"#fffdfd", ink:"#241f1a", muted:"#75656c", line:"#e6d7db", accent:"#e58cb4", accentSoft:"#f8e0eb", accentDeep:"#b8618d", ok:"#4f7a63", danger:"#a05c55" },
+  sage:   { bg:"#f3f6f2", panel:"#fffefb", ink:"#222722", muted:"#66706a", line:"#d7dfd7", accent:"#8cad8b", accentSoft:"#e2eee0", accentDeep:"#5f7e5d", ok:"#4f7a63", danger:"#a05c55" },
+  ink:    { bg:"#f2f6fb", panel:"#ffffff", ink:"#1f2530", muted:"#667182", line:"#d7dee9", accent:"#7b93b8", accentSoft:"#e2ebf8", accentDeep:"#53698f", ok:"#4f7a63", danger:"#a05c55" },
+  cocoa:  { bg:"#f6f1ec", panel:"#fffdfb", ink:"#2a211b", muted:"#71665f", line:"#ddd3ca", accent:"#b3886f", accentSoft:"#efe0d6", accentDeep:"#7f5e4b", ok:"#4f7a63", danger:"#a05c55" }
+};
+
+const SOURCES = {
+  original_canon: "Original Canon · Initial D",
+  manuscript: "Manuscript · ต้นฉบับของผู้เขียน",
+  project_decision: "Confirmed Project Decision",
+  idea: "Unconfirmed Idea"
+};
+const STATUSES = {
+  active: "ใช้งานอยู่",
+  unconfirmed: "ยังไม่ยืนยัน",
+  superseded: "ถูกขีดค่าแล้ว"
+};
+
+let state = loadState();
+let currentProjectId = state.currentProjectId || null;
+let currentChatId = null;
+let currentTheme = localStorage.getItem(THEME_KEY) || "lotus";
+
+const $ = (id) => document.getElementById(id);
+
+function uid(prefix) {
+  return prefix + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+function now() { return new Date().toISOString(); }
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(KEY)) || { projects: [], currentProjectId: null };
+  } catch {
+    return { projects: [], currentProjectId: null };
+  }
+}
+function saveState() {
+  state.currentProjectId = currentProjectId;
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+function currentProject() {
+  return state.projects.find(p => p.id === currentProjectId) || null;
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#039;"
+  }[ch]));
+}
+function fmt(iso) {
+  return new Date(iso).toLocaleString("th-TH", { dateStyle: "short", timeStyle: "short" });
+}
+function safeFilename(s) {
+  return s.replace(/[\\/:*?"<>|]/g, "_").slice(0, 80) || "adareet-project";
+}
+function detectCanonAmbiguity(text) {
+  return /แคนอน|canon/i.test(text) && !/(ต้นฉบับ|initial\\s*d|ฟิค|ของฉัน|project|manuscript)/i.test(text);
+}
+function detectAction(text) {
+  const t = text.trim();
+  if (/^ยืนยัน\\b|^ยืนยัน[:：]/i.test(t)) return { action: "confirm" };
+  if (/^ขีดค่า\\b|^ขีด\\b/i.test(t)) return { action: "strike", target: t.replace(/^ขีดค่า?\\s*[:：]?\\s*/i, "").trim() };
+  if (/^(ไอเดีย|ไอเดียว่า|ลองว่า|อาจจะ|น่าจะ)/i.test(t)) return { action: "save_idea" };
+  return { action: "none" };
+}
+
+function applyTheme(name) {
+  const t = THEMES[name] || THEMES.lotus;
+  currentTheme = name in THEMES ? name : "lotus";
+  localStorage.setItem(THEME_KEY, currentTheme);
+  for (const [k, v] of Object.entries(t)) {
+    const map = {
+      bg: "--bg",
+      panel: "--panel",
+      ink: "--ink",
+      muted: "--muted",
+      line: "--line",
+      accent: "--accent",
+      accentSoft: "--accent-soft",
+      accentDeep: "--accent-deep",
+      ok: "--ok",
+      danger: "--danger"
+    };
+    document.documentElement.style.setProperty(map[k], v);
+  }
+  $("themeSelect").value = currentTheme;
+  $("themePreviewDot").style.background = t.accent;
+}
+
+function addHistory(project, action, detail) {
+  project.history.push({ action, detail, at: now() });
+}
+function addData(project, content, source, status) {
+  const d = { id: uid("data"), content, source, status, createdAt: now(), revisedFrom: null };
+  project.data.push(d);
+  addHistory(project, "เพิ่มข้อมูล", `${SOURCES[source]} · ${content.slice(0, 120)}`);
+  return d;
+}
+function strikeData(project, dataId) {
+  const d = project.data.find(x => x.id === dataId);
+  if (!d || d.status === "superseded") return false;
+  d.status = "superseded";
+  addHistory(project, "ขีดค่าข้อมูล", `${d.id} · ${d.content.slice(0, 120)}`);
+  return true;
+}
+function createDefaultProject(name, description) {
+  const project = {
+    id: uid("project"),
+    name,
+    description: description || "",
+    createdAt: now(),
+    chats: [{
+      id: uid("chat"),
+      name: "ห้องเริ่มต้น",
+      createdAt: now(),
+      messages: [{
+        role: "system",
+        text: "สวัสดี ฉันคือ Adareet ผู้ช่วยจัดการข้อมูลของ Project นี้\\nคุณสามารถพ่นไอเดียออกมาได้เลย Prototype นี้จะเก็บข้อมูลพื้นฐานให้โดยไม่ต้องใช้ AI ภายนอก",
+        note: "นี่เป็น Core Prototype ยังไม่ได้เชื่อม AI"
+      }]
+    }],
+    data: [],
+    history: []
+  };
+  addHistory(project, "สร้าง Project", name);
+  return project;
+}
+
+function renderProjects() {
+  const box = $("projectList");
+  box.innerHTML = "";
+  state.projects.forEach(p => {
+    const btn = document.createElement("button");
+    btn.className = "project-item" + (p.id === currentProjectId ? " active" : "");
+    btn.innerHTML = `<strong>${esc(p.name)}</strong><small>${p.data.length} ข้อมูล · ${p.chats.length} Chat</small>`;
+    btn.onclick = () => {
+      currentProjectId = p.id;
+      currentChatId = p.chats[0]?.id || null;
+      saveState();
+      render();
+    };
+    box.appendChild(btn);
+  });
+}
+function renderChats() {
+  const p = currentProject();
+  const box = $("chatList");
+  box.innerHTML = "";
+  if (!p) return;
+  p.chats.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "chat-item" + (c.id === currentChatId ? " active" : "");
+    btn.textContent = c.name;
+    btn.onclick = () => { currentChatId = c.id; render(); };
+    box.appendChild(btn);
+  });
+  const add = document.createElement("button");
+  add.className = "secondary";
+  add.style.marginTop = "10px";
+  add.textContent = "＋ Chat ใหม่";
+  add.onclick = createChat;
+  box.appendChild(add);
+}
+function renderMessages() {
+  const p = currentProject();
+  const c = p?.chats.find(x => x.id === currentChatId);
+  const box = $("messages");
+  box.innerHTML = "";
+  if (!c) return;
+  c.messages.forEach(m => {
+    const wrap = document.createElement("div");
+    wrap.className = "message " + m.role;
+    wrap.innerHTML = `<div class="bubble">${esc(m.text)}</div>`;
+    if (m.note) wrap.innerHTML += `<div class="system-note">${esc(m.note)}</div>`;
+    box.appendChild(wrap);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+function renderData() {
+  const p = currentProject();
+  const box = $("dataGrid");
+  box.innerHTML = "";
+  if (!p?.data.length) {
+    box.innerHTML = `<div class="data-card"><div class="muted">ยังไม่มีข้อมูลที่จัดเก็บ</div></div>`;
+    return;
+  }
+  [...p.data].reverse().forEach(d => {
+    const card = document.createElement("article");
+    card.className = "data-card";
+    const source = SOURCES[d.source] || d.source;
+    const status = STATUSES[d.status] || d.status;
+    card.innerHTML = `
+      <div class="badges">
+        <span class="badge">${esc(source)}</span>
+        <span class="badge ${d.status === "superseded" ? "danger" : d.status === "active" ? "ok" : ""}">${esc(status)}</span>
+      </div>
+      <div class="data-content">${esc(d.content)}</div>
+      <div class="system-note">สร้างเมื่อ ${fmt(d.createdAt)}</div>
+      <div class="card-actions">
+        ${d.status !== "superseded" ? `<button class="secondary" data-strike="${d.id}">ขีดค่า</button>` : ""}
+      </div>
+    `;
+    box.appendChild(card);
+  });
+  box.querySelectorAll("[data-strike]").forEach(btn => {
+    btn.onclick = () => {
+      const p = currentProject();
+      if (!p) return;
+      strikeData(p, btn.dataset.strike);
+      addHistory(p, "ผู้ใช้ขีดค่าจากหน้าข้อมูล", btn.dataset.strike);
+      saveState();
+      render();
+    };
+  });
+}
+function renderHistory() {
+  const p = currentProject();
+  const box = $("historyList");
+  box.innerHTML = "";
+  if (!p?.history.length) {
+    box.innerHTML = `<div class="muted">ยังไม่มีประวัติการเปลี่ยนแปลง</div>`;
+    return;
+  }
+  [...p.history].reverse().forEach(h => {
+    const row = document.createElement("div");
+    row.className = "history-item";
+    row.innerHTML = `<strong>${esc(h.action)}</strong><div>${esc(h.detail)}</div><div class="system-note">${fmt(h.at)}</div>`;
+    box.appendChild(row);
+  });
+}
+function render() {
+  renderProjects();
+  const p = currentProject();
+  $("emptyState").classList.toggle("hidden", !!p);
+  $("workspace").classList.toggle("hidden", !p);
+  $("exportBtn").disabled = !p;
+  if (!p) {
+    $("projectTitle").textContent = "ยังไม่มี Project";
+    $("projectMeta").textContent = "สร้าง Project เพื่อเริ่มทดลอง";
+    return;
+  }
+  $("projectTitle").textContent = p.name;
+  $("projectMeta").textContent = `${p.description || "ไม่มีคำอธิบาย"} · ${p.chats.length} Chat · ${p.data.length} รายการข้อมูล`;
+  if (!currentChatId || !p.chats.some(c => c.id === currentChatId)) currentChatId = p.chats[0]?.id || null;
+  renderChats();
+  renderMessages();
+  renderData();
+  renderHistory();
+}
+function openProjectDialog() {
+  $("projectName").value = "";
+  $("projectDescription").value = "";
+  $("projectDialog").showModal();
+}
+function openDataDialog() {
+  $("dataContent").value = "";
+  $("dataSource").value = "idea";
+  $("dataStatus").value = "unconfirmed";
+  $("dataDialog").showModal();
+}
+function createChat() {
+  const p = currentProject();
+  if (!p) return;
+  const c = { id: uid("chat"), name: `Chat ${p.chats.length + 1}`, createdAt: now(), messages: [] };
+  p.chats.push(c);
+  currentChatId = c.id;
+  addHistory(p, "สร้าง Chat", c.name);
+  saveState();
+  render();
+}
+function sendMessage() {
+  const input = $("messageInput");
+  const text = input.value.trim();
+  if (!text) return;
+  const p = currentProject();
+  const c = p.chats.find(x => x.id === currentChatId);
+  c.messages.push({ role: "user", text, at: now() });
+
+  if (detectCanonAmbiguity(text)) {
+    c.messages.push({
+      role: "assistant",
+      text: "ตรงนี้คุณหมายถึง Canon แบบไหน?",
+      note: "Prototype ตรวจพบคำกำกวมที่อาจมีผลต่อการจัดเก็บข้อมูล"
+    });
+  } else {
+    const act = detectAction(text);
+    if (act.action === "save_idea") {
+      addData(p, text, "idea", "unconfirmed");
+      c.messages.push({ role: "assistant", text: "เก็บไว้เป็นไอเดียที่ยังไม่ยืนยันแล้ว", note: "บันทึกข้อมูลเรียบร้อย" });
+    } else if (act.action === "confirm") {
+      addData(p, text.replace(/^ยืนยัน[:：]?\s*/i, ""), "project_decision", "active");
+      c.messages.push({ role: "assistant", text: "รับทราบและบันทึกเป็น Confirmed Project Decision แล้ว", note: "บันทึกข้อมูลเรียบร้อย" });
+    } else if (act.action === "strike") {
+      const target = p.data.find(d => d.content.includes(act.target));
+      if (target) {
+        strikeData(p, target.id);
+        c.messages.push({ role: "assistant", text: "ขีดค่าข้อมูลเดิมออกจากสถานะใช้งานแล้ว แต่ยังเก็บประวัติไว้", note: "ข้อมูลถูกขีดค่าแล้ว" });
+      } else {
+        c.messages.push({ role: "assistant", text: "ฉันยังหาเป้าหมายที่จะขีดค่าไม่เจอ จึงยังไม่เปลี่ยนข้อมูลใด ๆ" });
+      }
+    } else {
+      c.messages.push({
+        role: "assistant",
+        text: "รับข้อความแล้ว แต่ยังไม่ได้ตัดสินใจว่าเป็นข้อมูลที่ควรจัดเก็บโดยอัตโนมัติ",
+        note: "v0.1 จงใจไม่ให้ Core เดาความหมายลึก ๆ แทน AI"
+      });
+    }
+  }
+
+  addHistory(p, "บันทึกบทสนทนา", text.slice(0, 120));
+  input.value = "";
+  saveState();
+  render();
+}
+$("projectForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("projectName").value.trim();
+  if (!name) return;
+  const p = createDefaultProject(name, $("projectDescription").value.trim());
+  state.projects.push(p);
+  currentProjectId = p.id;
+  currentChatId = p.chats[0].id;
+  saveState();
+  $("projectDialog").close();
+  render();
+});
+$("dataForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const p = currentProject();
+  const content = $("dataContent").value.trim();
+  if (!content || !p) return;
+  addData(p, content, $("dataSource").value, $("dataStatus").value);
+  addHistory(p, "ผู้ใช้เพิ่มข้อมูลด้วยตนเอง", content.slice(0, 120));
+  saveState();
+  $("dataDialog").close();
+  render();
+});
+$("themeForm").addEventListener("submit", e => {
+  e.preventDefault();
+  applyTheme($("themeSelect").value);
+  $("themeDialog").close();
+});
+$("sendBtn").onclick = sendMessage;
+$("messageInput").addEventListener("keydown", e => {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) sendMessage();
+});
+$("newProjectBtn").onclick = openProjectDialog;
+$("emptyNewBtn").onclick = openProjectDialog;
+$("addDataBtn").onclick = openDataDialog;
+$("themeBtn").onclick = () => {
+  $("themeSelect").value = currentTheme;
+  $("themePreviewDot").style.background = THEMES[currentTheme].accent;
+  $("themeDialog").showModal();
+};
+$("themeSelect").addEventListener("change", () => {
+  $("themePreviewDot").style.background = THEMES[$("themeSelect").value].accent;
+});
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(x => x.classList.add("hidden"));
+    btn.classList.add("active");
+    const panel = document.getElementById(btn.dataset.tab + "Tab");
+    if (panel) panel.classList.remove("hidden");
+  };
+});
+$("exportBtn").onclick = () => {
+  const p = currentProject();
+  if (!p) return;
+  const blob = new Blob([JSON.stringify(p, null, 2)], { type: "application/json;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${safeFilename(p.name)}.adareet.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+applyTheme(currentTheme);
+render();
+</script>
+</body>
+</html>
