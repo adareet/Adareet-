@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="th" data-theme="white" data-font="system">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta
+    name="description"
+    content="Adareet v2.5 — project-first thinking and writing environment."
+  />
+  <title>Adareet v2.5</title>
+
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./app.js" defer></script>
+</head>
+
+<body>
+
+  <!-- =========================
+       WELCOME / LOGIN
+       ========================= -->
+
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+
+      <button
+        id="loginLogoBtn"
+        class="brand-logo brand-logo-large"
+        type="button"
+        aria-label="Adareet"
+      >
+        <span class="logo-a">A</span>
+        <span class="logo-rest">dareet</span>
+        <span class="logo-star" aria-hidden="true">✦</span>
+      </button>
+
+      <p class="login-tagline">
+        พื้นที่สำหรับคิดก่อน แล้วค่อยจัดระเบียบทีหลัง
+      </p>
+
+      <div class="login-copy">
+        <span class="eyebrow">YOUR IDEAS, CONNECTED</span>
+        <h1>เปิด Adareet</h1>
+        <p>
+          คุย คิด เขียน และค่อยเปลี่ยนความคิดให้กลายเป็นข้อมูลที่จัดการได้
+        </p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <label class="field">
+          <span>ชื่อที่แสดง</span>
+          <input
+            id="loginName"
+            type="text"
+            autocomplete="name"
+            placeholder="Ice"
+          />
+        </label>
+
+        <label class="field">
+          <span>อีเมล</span>
+          <input
+            id="loginEmail"
+            type="email"
+            autocomplete="email"
+            placeholder="ice@example.com"
+          />
+        </label>
+
+        <div class="button-row">
+          <button id="googleLoginBtn" class="button primary" type="button">
+            Continue with Google
+          </button>
+
+          <button id="guestLoginBtn" class="button soft" type="button">
+            เข้าใช้งานแบบ Guest
+          </button>
+        </div>
+
+        <p class="hint">
+          Google ในตอนนี้เป็น prototype เท่านั้น OAuth จริงจะต่อภายหลัง
+        </p>
+      </form>
+    </div>
+  </section>
+
+
+  <!-- =========================
+       WELCOME ANIMATION
+       ========================= -->
+
+  <section id="welcomeScreen" class="welcome-screen is-hidden">
+    <div class="welcome-logo" aria-hidden="true">
+      <span class="logo-a">A</span>
+      <span class="logo-rest">dareet</span>
+      <span class="logo-star">✦</span>
+    </div>
+  </section>
+
+
+  <!-- =========================
+       APPLICATION
+       ========================= -->
+
+  <div id="appShell" class="app-shell is-hidden">
+
+    <!-- =========================
+         LEFT SIDEBAR
+         ========================= -->
+
+    <aside id="sidebar" class="sidebar">
+
+      <div class="sidebar-top">
+
+        <button
+          id="brandHomeBtn"
+          class="sidebar-brand"
+          type="button"
+          aria-label="กลับหน้า Home"
+        >
+          <span class="brand-logo">
+            <span class="logo-a">A</span>
+            <span class="logo-rest">dareet</span>
+          </span>
+
+          <span class="logo-star" aria-hidden="true">✦</span>
+        </button>
+
+        <button
+          id="sidebarCollapseBtn"
+          class="icon-button"
+          type="button"
+          title="พับ Sidebar"
+          aria-label="พับ Sidebar"
+        >
+          ☰
+        </button>
+
+      </div>
+
+
+      <!-- NAVIGATION -->
+
+      <nav class="nav-section" aria-label="หลัก">
+
+        <button
+          class="nav-item active"
+          data-view="home"
+          type="button"
+        >
+          <span class="nav-icon">⌂</span>
+          <span class="nav-label">หน้าหลัก</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="projects"
+          type="button"
+        >
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">โปรเจกต์</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="recent"
+          type="button"
+        >
+          <span class="nav-icon">◷</span>
+          <span class="nav-label">แชทล่าสุด</span>
+        </button>
+
+      </nav>
+
+
+      <!-- QUICK CHAT -->
+
+      <section class="sidebar-section">
+
+        <div class="sidebar-section-head">
+
+          <span class="nav-label">
+            Quick Chat
+          </span>
+
+          <button
+            id="quickChatBtn"
+            class="tiny-button"
+            type="button"
+            title="สร้าง Quick Chat"
+          >
+            +
+          </button>
+
+        </div>
+
+        <div
+          id="inboxChatList"
+          class="inbox-chat-list"
+        ></div>
+
+      </section>
+
+
+      <!-- PROJECT LIST -->
+
+      <section class="sidebar-section project-tree-wrap">
+
+        <div class="sidebar-section-head">
+
+          <span class="nav-label">
+            โปรเจกต์ของฉัน
+          </span>
+
+          <button
+            id="newProjectSidebarBtn"
+            class="tiny-button"
+            type="button"
+            title="สร้าง Project"
+          >
+            +
+          </button>
+
+        </div>
+
+        <div
+          id="projectTree"
+          class="project-tree"
+        ></div>
+
+      </section>
+
+
+      <!-- SIDEBAR FOOTER -->
+
+      <div class="sidebar-footer">
+
+        <button
+          class="nav-item"
+          data-view="settings"
+          type="button"
+        >
+          <span class="nav-icon">⚙</span>
+          <span class="nav-label">ตั้งค่า</span>
+        </button>
+
+        <button
+          id="signOutBtn"
+          class="nav-item danger-nav"
+          type="button"
+        >
+          <span class="nav-icon">↪</span>
+          <span class="nav-label">ออกจากระบบ</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN AREA
+         ========================= -->
+
+    <main class="main-pane">
+
+      <header class="topbar">
+
+        <div class="topbar-left">
+
+          <button
+            id="mobileSidebarBtn"
+            class="icon-button mobile-only"
+            type="button"
+            aria-label="เปิดเมนู"
+          >
+            ☰
+          </button>
+
+          <div>
+
+            <div id="breadcrumbs" class="breadcrumbs">
+              หน้าหลัก
+            </div>
+
+            <h1 id="viewTitle">
+              Adareet
+            </h1>
+
+            <p id="viewSubtitle" class="muted">
+              พื้นที่สำหรับคิดและจัดความคิดทีหลัง
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+          <button
+            id="topQuickChatBtn"
+            class="button soft"
+            type="button"
+          >
+            ＋ Quick Chat
+          </button>
+
+          <button
+            id="topNewProjectBtn"
+            class="button primary"
+            type="button"
+          >
+            ＋ Project
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- =========================
+           HOME
+           ========================= -->
+
+      <section id="homeView" class="view">
+
+        <div class="home-hero">
+
+          <div>
+
+            <span class="eyebrow">
+              YOUR IDEAS, CONNECTED
+            </span>
+
+            <h2>
+              คิดก่อน จัดทีหลัง
+            </h2>
+
+            <p>
+              ไม่ต้องเลือกประเภทข้อมูลก่อนเริ่มคิด
+              โยนความคิดเข้ามาได้ทันที แล้วค่อยจัดการเมื่อพร้อม
+            </p>
+
+          </div>
+
+          <button
+            id="heroQuickChatBtn"
+            class="button primary large"
+            type="button"
+          >
+            เริ่มคุยทันที
+          </button>
+
+        </div>
+
+
+        <!-- PROJECTS -->
+
+        <section class="home-section">
+
+          <div class="section-head">
+
+            <div>
+
+              <h2>
+                โปรเจกต์ของฉัน
+              </h2>
+
+              <p class="muted">
+                Project เป็นพื้นที่หลักของงาน
+              </p>
+
+            </div>
+
+            <button
+              id="homeNewProjectBtn"
+              class="button soft"
+              type="button"
+            >
+              ＋ สร้าง Project
+            </button>
+
+          </div>
+
+          <div
+            id="homeProjectGrid"
+            class="project-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- CONTINUE -->
+
+        <section class="home-section">
+
+          <div class="section-head">
+
+            <div>
+
+              <h2>
+                ทำต่อจากที่ค้างไว้
+              </h2>
+
+              <p class="muted">
+                กลับไปยัง Project หรือ Chat ล่าสุด
+              </p>
+
+            </div>
+
+          </div>
+
+          <div
+            id="continueList"
+            class="continue-list"
+          ></div>
+
+        </section>
+
+      </section>
+
+
+      <!-- =========================
+           PROJECT LIST
+           ========================= -->
+
+      <section
+        id="projectsView"
+        class="view is-hidden"
+      >
+
+        <div class="section-head">
+
+          <div>
+            <h2>โปรเจกต์</h2>
+            <p class="muted">
+              Project คือพื้นที่หลักของงานใน Adareet
+            </p>
+          </div>
+
+          <button
+            id="projectsNewBtn"
+            class="button primary"
+            type="button"
+          >
+            ＋ สร้าง Project
+          </button>
+
+        </div>
+
+        <div
+          id="projectsGrid"
+          class="project-grid"
+        ></div>
+
+      </section>
+
+
+      <!-- =========================
+           RECENT CHATS
+           ========================= -->
+
+      <section
+        id="recentView"
+        class="view is-hidden"
+      >
+
+        <div class="section-head">
+
+          <div>
+            <h2>แชทล่าสุด</h2>
+            <p class="muted">
+              ทั้ง Quick Chat และ Chat ใน Project
+            </p>
+          </div>
+
+          <button
+            id="recentQuickBtn"
+            class="button soft"
+            type="button"
+          >
+            ＋ Quick Chat
+          </button>
+
+        </div>
+
+        <div
+          id="recentChatList"
+          class="recent-chat-list"
+        ></div>
+
+      </section>
+
+
+      <!-- =========================
+           SETTINGS
+           ========================= -->
+
+      <section
+        id="settingsView"
+        class="view is-hidden"
+      >
+
+        <div class="settings-shell">
+
+          <nav class="settings-menu">
+
+            <button
+              class="settings-tab active"
+              data-settings-tab="appearance"
+              type="button"
+            >
+              หน้าตา
+            </button>
+
+            <button
+              class="settings-tab"
+              data-settings-tab="data"
+              type="button"
+            >
+              ข้อมูล
+            </button>
+
+            <button
+              class="settings-tab"
+              data-settings-tab="ai"
+              type="button"
+            >
+              AI
+            </button>
+
+            <button
+              class="settings-tab"
+              data-settings-tab="account"
+              type="button"
+            >
+              บัญชี
+            </button>
+
+          </nav>
+
+          <div
+            id="settingsContent"
+            class="settings-content"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           PROJECT WORKSPACE
+           ========================= -->
+
+      <section
+        id="projectView"
+        class="view is-hidden"
+      >
+
+        <div class="workspace-top">
+
+          <div class="project-context">
+
+            <div
+              id="projectCoverSmall"
+              class="project-cover small"
+            ></div>
+
+            <div>
+
+              <div
+                id="projectNameLabel"
+                class="project-name-label"
+              >
+                Project
+              </div>
+
+              <p
+                id="projectDescriptionLabel"
+                class="muted"
+              ></p>
+
+            </div>
+
+          </div>
+
+
+          <div class="workspace-actions">
+
+            <button
+              id="projectHomeBtn"
+              class="button soft"
+              type="button"
+            >
+              ภาพรวม
+            </button>
+
+            <button
+              id="projectChatBtn"
+              class="button soft"
+              type="button"
+            >
+              Chat
+            </button>
+
+            <button
+              id="projectKnowledgeBtn"
+              class="button soft"
+              type="button"
+            >
+              Knowledge
+            </button>
+
+            <button
+              id="projectChaptersBtn"
+              class="button soft"
+              type="button"
+            >
+              Chapters
+            </button>
+
+            <button
+              id="projectHistoryBtn"
+              class="button soft"
+              type="button"
+            >
+              History
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- PROJECT OVERVIEW -->
+
+        <div
+          id="projectOverviewView"
+          class="project-subview"
+        >
+          <div id="projectOverviewContent"></div>
+        </div>
+
+
+        <!-- PROJECT CHAT -->
+
+        <div
+          id="projectChatView"
+          class="project-subview is-hidden"
+        >
+
+          <div class="chat-layout">
+
+            <aside class="chat-list-panel">
+
+              <div class="section-head compact">
+
+                <div>
+                  <h3>Chats</h3>
+                  <p class="muted">
+                    Project เดียว หลายห้อง
+                  </p>
+                </div>
+
+                <button
+                  id="projectNewChatBtn"
+                  class="tiny-button primary-tiny"
+                  type="button"
+                >
+                  +
+                </button>
+
+              </div>
+
+              <div
+                id="projectChatList"
+                class="project-chat-list"
+              ></div>
+
+            </aside>
+
+
+            <section class="chat-main">
+
+              <div
+                id="chatHeaderBar"
+                class="chat-header-bar"
+              ></div>
+
+              <div
+                id="messageList"
+                class="message-list"
+                aria-live="polite"
+              ></div>
+
+              <div class="composer-card">
+
+                <div class="composer-top">
+
+                  <label
+                    class="composer-label"
+                    for="composerInput"
+                  >
+                    พ่นไอเดียหรือคุยกับ Adareet
+                  </label>
+
+                  <span
+                    id="chatSaveStatus"
+                    class="save-status"
+                  >
+                    บันทึกแล้ว
+                  </span>
+
+                </div>
+
+                <textarea
+                  id="composerInput"
+                  class="composer-input"
+                  placeholder="พิมพ์อะไรก็ได้ก่อน ไม่ต้องจัดระเบียบ"
+                ></textarea>
+
+                <div class="composer-actions">
+
+                  <div class="quick-actions">
+
+                    <button
+                      class="button soft quick-action"
+                      data-quick="idea"
+                      type="button"
+                    >
+                      ไอเดีย
+                    </button>
+
+                    <button
+                      class="button soft quick-action"
+                      data-quick="confirm"
+                      type="button"
+                    >
+                      ยืนยัน
+                    </button>
+
+                    <button
+                      class="button soft quick-action"
+                      data-quick="chapter"
+                      type="button"
+                    >
+                      Chapter
+                    </button>
+
+                    <button
+                      class="button soft quick-action"
+                      data-quick="canon"
+                      type="button"
+                    >
+                      Canon?
+                    </button>
+
+                  </div>
+
+                  <button
+                    id="sendBtn"
+                    class="button primary"
+                    type="button"
+                  >
+                    ส่ง
+                  </button>
+
+                </div>
+
+              </div>
+
+            </section>
+
+          </div>
+
+        </div>
+
+
+        <!-- KNOWLEDGE -->
+
+        <div
+          id="projectKnowledgeView"
+          class="project-subview is-hidden"
+        >
+
+          <div class="section-head">
+
+            <div>
+              <h2>Knowledge</h2>
+              <p class="muted">
+                ข้อมูลที่เก็บไว้สำหรับ Project
+              </p>
+            </div>
+
+            <button
+              id="addKnowledgeBtn"
+              class="button primary"
+              type="button"
+            >
+              ＋ เพิ่มข้อมูล
+            </button>
+
+          </div>
+
+
+          <div class="knowledge-toolbar">
+
+            <label class="search-box">
+
+              <span>⌕</span>
+
+              <input
+                id="knowledgeSearch"
+                type="search"
+                placeholder="ค้นหาไอเดีย ตัวละคร เหตุการณ์..."
+              />
+
+            </label>
+
+            <div
+              id="knowledgeStatusFilters"
+              class="filter-pills"
+            ></div>
+
+          </div>
+
+
+          <div
+            id="knowledgeList"
+            class="knowledge-list"
+          ></div>
+
+        </div>
+
+
+        <!-- CHAPTERS -->
+
+        <div
+          id="projectChaptersView"
+          class="project-subview is-hidden"
+        >
+
+          <div class="section-head">
+
+            <div>
+              <h2>Chapters</h2>
+              <p class="muted">
+                พื้นที่เขียนจริง
+              </p>
+            </div>
+
+            <button
+              id="addChapterBtn"
+              class="button primary"
+              type="button"
+            >
+              ＋ Chapter
+            </button>
+
+          </div>
+
+          <div
+            id="chapterList"
+            class="chapter-list"
+          ></div>
+
+        </div>
+
+
+        <!-- HISTORY -->
+
+        <div
+          id="projectHistoryView"
+          class="project-subview is-hidden"
+        >
+
+          <div class="section-head">
+
+            <div>
+              <h2>History</h2>
+              <p class="muted">
+                ประวัติการเปลี่ยนแปลงของ Project
+              </p>
+            </div>
+
+            <button
+              id="clearHistoryBtn"
+              class="button soft"
+              type="button"
+            >
+              ล้างประวัติ
+            </button>
+
+          </div>
+
+          <div
+            id="historyList"
+            class="history-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================
+       PROJECT DIALOG
+       ========================= -->
+
+  <dialog id="projectDialog" class="dialog">
+
+    <form
+      method="dialog"
+      id="projectForm"
+      class="dialog-card"
+    >
+
+      <button
+        class="dialog-close"
+        value="cancel"
+        type="submit"
+        aria-label="ปิด"
+      >
+        ×
+      </button>
+
+      <span class="eyebrow">
+        NEW PROJECT
+      </span>
+
+      <h2>สร้าง Project</h2>
+
+      <p class="muted">
+        เริ่มง่าย ๆ ก่อน รายละเอียดอื่นค่อยเติมภายหลัง
+      </p>
+
+      <label class="field">
+
+        <span>
+          ชื่อ Project
+        </span>
+
+        <input
+          id="projectName"
+          type="text"
+          required
+          placeholder="Initial D Butterfly Effect"
+        />
+
+      </label>
+
+      <label class="field">
+
+        <span>
+          คำอธิบาย
+        </span>
+
+        <textarea
+          id="projectDesc"
+          rows="3"
+          placeholder="ไม่ใส่ก็ได้"
+        ></textarea>
+
+      </label>
+
+      <label class="field">
+
+        <span>
+          รูปปก (URL)
+        </span>
+
+        <input
+          id="projectCover"
+          type="url"
+          placeholder="https://..."
+        />
+
+      </label>
+
+      <div class="dialog-actions">
+
+        <button
+          class="button soft"
+          value="cancel"
+          type="submit"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          class="button primary"
+          value="default"
+          type="submit"
+        >
+          สร้าง Project
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =========================
+       DELETE CHAT DIALOG
+       ========================= -->
+
+  <dialog id="chatDeleteDialog" class="dialog">
+
+    <form
+      method="dialog"
+      id="chatDeleteForm"
+      class="dialog-card compact-dialog"
+    >
+
+      <button
+        class="dialog-close"
+        value="cancel"
+        type="submit"
+        aria-label="ปิด"
+      >
+        ×
+      </button>
+
+      <span class="eyebrow">
+        DELETE CHAT
+      </span>
+
+      <h2>
+        ลบ Chat นี้?
+      </h2>
+
+      <p
+        id="chatDeleteText"
+        class="muted"
+      ></p>
+
+      <div class="dialog-actions">
+
+        <button
+          class="button soft"
+          value="cancel"
+          type="submit"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          id="confirmDeleteChatBtn"
+          class="button danger"
+          value="default"
+          type="submit"
+        >
+          ลบ Chat
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =========================
+       KNOWLEDGE DIALOG
+       ========================= -->
+
+  <dialog id="knowledgeDialog" class="dialog">
+
+    <form
+      method="dialog"
+      id="knowledgeForm"
+      class="dialog-card"
+    >
+
+      <button
+        class="dialog-close"
+        value="cancel"
+        type="submit"
+        aria-label="ปิด"
+      >
+        ×
+      </button>
+
+      <span class="eyebrow">
+        KNOWLEDGE
+      </span>
+
+      <h2>
+        เพิ่มข้อมูล
+      </h2>
+
+      <label class="field">
+
+        <span>
+          ข้อมูล
+        </span>
+
+        <textarea
+          id="knowledgeText"
+          rows="5"
+          required
+          placeholder="พิมพ์ความคิดหรือข้อมูลตรงนี้"
+        ></textarea>
+
+      </label>
+
+      <label class="field">
+
+        <span>
+          แหล่งที่มา
+        </span>
+
+        <input
+          id="knowledgeSource"
+          type="text"
+          value="Unconfirmed Idea"
+        />
+
+      </label>
+
+      <label class="field">
+
+        <span>
+          สถานะ
+        </span>
+
+        <select id="knowledgeStatus">
+
+          <option value="unconfirmed">
+            ยังไม่ตัดสินใจ
+          </option>
+
+          <option value="confirmed">
+            ยืนยันแล้ว
+          </option>
+
+          <option value="rejected">
+            ขีดค่าแล้ว
+          </option>
+
+          <option value="supplementary">
+            ข้อมูลเสริม
+          </option>
+
+        </select>
+
+      </label>
+
+      <div class="dialog-actions">
+
+        <button
+          class="button soft"
+          value="cancel"
+          type="submit"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          class="button primary"
+          value="default"
+          type="submit"
+        >
+          เก็บข้อมูล
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =========================
+       CHAPTER DIALOG
+       ========================= -->
+
+  <dialog
+    id="chapterDialog"
+    class="dialog chapter-dialog"
+  >
+
+    <form
+      method="dialog"
+      id="chapterForm"
+      class="dialog-card chapter-editor-dialog"
+    >
+
+      <button
+        class="dialog-close"
+        value="cancel"
+        type="submit"
+        aria-label="ปิด"
+      >
+        ×
+      </button>
+
+      <div class="chapter-editor-head">
+
+        <div>
+
+          <span class="eyebrow">
+            MANUSCRIPT
+          </span>
+
+          <input
+            id="chapterTitle"
+            class="chapter-title-input"
+            type="text"
+            placeholder="Chapter title"
+          />
+
+        </div>
+
+        <span
+          id="chapterWordCount"
+          class="word-count"
+        >
+          0 คำ
+        </span>
+
+      </div>
+
+      <textarea
+        id="chapterContent"
+        class="manuscript-editor"
+        placeholder="เขียนตรงนี้เลย..."
+      ></textarea>
+
+      <div class="dialog-actions">
+
+        <button
+          class="button soft"
+          value="cancel"
+          type="submit"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          class="button primary"
+          value="default"
+          type="submit"
+        >
+          บันทึก Chapter
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =========================
+       AI CONSENT
+       ========================= -->
+
+  <dialog
+    id="aiConsentDialog"
+    class="dialog"
+  >
+
+    <form
+      method="dialog"
+      id="aiConsentForm"
+      class="dialog-card compact-dialog"
+    >
+
+      <button
+        class="dialog-close"
+        value="cancel"
+        type="submit"
+        aria-label="ปิด"
+      >
+        ×
+      </button>
+
+      <span class="eyebrow">
+        AI ACCESS
+      </span>
+
+      <h2>
+        อนุญาต AI เข้าถึง Project นี้?
+      </h2>
+
+      <p class="muted">
+        ตอนนี้เป็นเพียงระบบสิทธิ์
+        ยังไม่มี AI ภายนอกเชื่อมอยู่
+      </p>
+
+      <div class="dialog-actions">
+
+        <button
+          class="button soft"
+          value="cancel"
+          type="submit"
+        >
+          ยกเลิก
+        </button>
+
+        <button
+          id="grantAiBtn"
+          class="button primary"
+          value="default"
+          type="submit"
+        >
+          อนุญาต
+        </button>
+
+      </div>
+
+    </form>
+
+  </dialog>
+
+
+</body>
+</html>
