@@ -3,6 +3,14 @@
 ADAREET v2.6
 APPLICATION BOOTSTRAP
 ============================================================
+
+หน้าที่:
+- เริ่มต้นแอป
+- เชื่อม core กับ data layer
+- แสดงสถานะพื้นฐานของระบบ
+- เป็นจุดประกอบ module
+- ไม่เก็บ business logic ของ feature ไว้ที่นี่
+============================================================
 */
 
 import { APP_CONFIG } from "./core/config.js";
@@ -22,14 +30,29 @@ import {
 
 const app = document.querySelector("#app");
 
+if (!app) {
+  throw new Error(
+    "Adareet: #app container was not found."
+  );
+}
+
+function getSystemSummary() {
+  return {
+    version: APP_CONFIG.version,
+    projects: getProjects().length,
+    chats: getChats().length,
+    memories: getMemories().length,
+  };
+}
+
 function renderShell() {
+  const summary = getSystemSummary();
+
   app.innerHTML = `
     <div class="app-shell">
       <aside class="app-sidebar">
-        <div class="empty-state">
-          <div class="empty-state__inner">
-            <strong>${APP_CONFIG.name}</strong>
-          </div>
+        <div class="app-content">
+          <strong>${APP_CONFIG.name}</strong>
         </div>
       </aside>
 
@@ -37,19 +60,21 @@ function renderShell() {
         <div class="app-content">
           <section class="empty-state">
             <div class="empty-state__inner">
-              <h1>${APP_CONFIG.name} v${APP_CONFIG.version}</h1>
+              <h1>
+                ${APP_CONFIG.name} v${APP_CONFIG.version}
+              </h1>
 
               <div class="app-status">
                 <span>
-                  Projects: ${getProjects().length}
+                  Projects: ${summary.projects}
                 </span>
 
                 <span>
-                  Chats: ${getChats().length}
+                  Chats: ${summary.chats}
                 </span>
 
                 <span>
-                  Memories: ${getMemories().length}
+                  Memories: ${summary.memories}
                 </span>
               </div>
             </div>
@@ -61,8 +86,11 @@ function renderShell() {
 }
 
 function initializeState() {
+  const currentState = getState();
+
   setState({
     app: {
+      ...currentState.app,
       ready: true,
     },
   });
@@ -76,10 +104,11 @@ function initialize() {
   renderShell();
   initializeState();
 
-  window.Adareet = {
+  window.Adareet = Object.freeze({
     config: APP_CONFIG,
     getState,
-  };
+    getSystemSummary,
+  });
 }
 
 initialize();
