@@ -49,13 +49,10 @@ export function createRouter({
       null;
 
     if (!providerName) {
-      throw new Error(
-        "No AI provider selected."
-      );
+      throw new Error("No AI provider selected.");
     }
 
-    const provider =
-      getProvider(providerName);
+    const provider = getProvider(providerName);
 
     if (!provider) {
       throw new Error(
@@ -63,10 +60,7 @@ export function createRouter({
       );
     }
 
-    if (
-      typeof provider.generate !==
-      "function"
-    ) {
+    if (typeof provider.generate !== "function") {
       throw new Error(
         `AI provider "${providerName}" does not implement generate().`
       );
