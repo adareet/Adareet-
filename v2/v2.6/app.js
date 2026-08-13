@@ -3,13 +3,6 @@
 ADAREET v2.6
 APPLICATION BOOTSTRAP
 ============================================================
-
-หน้าที่:
-- เริ่มต้นแอป
-- เชื่อม core กับ data layer
-- เตรียมพื้นที่ให้ UI
-- ไม่เก็บ business logic ไว้ในไฟล์นี้
-============================================================
 */
 
 import { APP_CONFIG } from "./core/config.js";
@@ -33,9 +26,10 @@ function renderShell() {
   app.innerHTML = `
     <div class="app-shell">
       <aside class="app-sidebar">
-        <div class="app-sidebar__brand">
-          <strong>${APP_CONFIG.name}</strong>
-          <span>v${APP_CONFIG.version}</span>
+        <div class="empty-state">
+          <div class="empty-state__inner">
+            <strong>${APP_CONFIG.name}</strong>
+          </div>
         </div>
       </aside>
 
@@ -43,12 +37,7 @@ function renderShell() {
         <div class="app-content">
           <section class="empty-state">
             <div class="empty-state__inner">
-              <h1>${APP_CONFIG.name}</h1>
-
-              <p>
-                Application shell is connected to the
-                core and data layers.
-              </p>
+              <h1>${APP_CONFIG.name} v${APP_CONFIG.version}</h1>
 
               <div class="app-status">
                 <span>
@@ -89,7 +78,7 @@ function initialize() {
 
   window.Adareet = {
     config: APP_CONFIG,
-    state: getState,
+    getState,
   };
 }
 
