@@ -1,63 +1,89 @@
-/* =========================================================
-   ADAREET v2.6
-   AI / ROUTER
-   ========================================================= */
+/*
+============================================================
+ADAREET v2.6
+AI / ROUTER
+============================================================
+*/
 
-const providers = new Map();
+export function createRouter({
+  providers = {},
+  config = {},
+} = {}) {
+  const registry = new Map(
+    Object.entries(providers)
+  );
 
-export function registerProvider(name, provider) {
-  if (!name || !provider) {
-    throw new Error("Provider name and provider are required.");
+  function registerProvider(name, provider) {
+    if (!name || !provider) {
+      throw new Error(
+        "Provider name and provider are required."
+      );
+    }
+
+    registry.set(name, provider);
   }
 
-  providers.set(name, provider);
-}
-
-export function unregisterProvider(name) {
-  providers.delete(name);
-}
-
-export function getProvider(name) {
-  return providers.get(name) || null;
-}
-
-export function getProviders() {
-  return [...providers.keys()];
-}
-
-export function hasProvider(name) {
-  return providers.has(name);
-}
-
-export async function route(request = {}) {
-  const {
-    provider: requestedProvider = null,
-    model = null,
-    messages = [],
-    options = {},
-  } = request;
-
-  if (!requestedProvider) {
-    throw new Error("No AI provider selected.");
+  function unregisterProvider(name) {
+    registry.delete(name);
   }
 
-  const provider = getProvider(requestedProvider);
-
-  if (!provider) {
-    throw new Error(
-      `AI provider "${requestedProvider}" is not registered.`
-    );
+  function getProvider(name) {
+    return registry.get(name) || null;
   }
 
-  if (typeof provider.generate !== "function") {
-    throw new Error(
-      `AI provider "${requestedProvider}" does not implement generate().`
-    );
+  function getProviders() {
+    return [...registry.keys()];
   }
 
-  return provider.generate({
-    model,
-    messages,
-    options,
-  });
+  async function route(request = {}) {
+    const {
+      provider: requestedProvider = null,
+      model = null,
+      messages = [],
+      options = {},
+    } = request;
+
+    const providerName =
+      requestedProvider ||
+      config.defaultProvider ||
+      null;
+
+    if (!providerName) {
+      throw new Error(
+        "No AI provider selected."
+      );
+    }
+
+    const provider =
+      getProvider(providerName);
+
+    if (!provider) {
+      throw new Error(
+        `AI provider "${providerName}" is not registered.`
+      );
+    }
+
+    if (
+      typeof provider.generate !==
+      "function"
+    ) {
+      throw new Error(
+        `AI provider "${providerName}" does not implement generate().`
+      );
+    }
+
+    return provider.generate({
+      model,
+      messages,
+      options,
+    });
+  }
+
+  return {
+    registerProvider,
+    unregisterProvider,
+    getProvider,
+    getProviders,
+    route,
+  };
 }
